@@ -1,11 +1,28 @@
 from PIL import Image, ImageDraw, ImageFont
 import os
 import pandas as pd
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+from reportlab.lib.utils import ImageReader
+
 
 def reduz_icon(icon):
     icon = icon.resize((100, 100))
     return icon
 
+
+def pdf_generator():
+    # Criar um novo PDF com uma página em branco
+    c = canvas.Canvas("output.pdf", pagesize=letter)
+    c.setPageSize((612, 792))
+    tj = ImageReader('imgs/logo_tj.png')
+    img = ImageReader('foto.png')
+
+    c.drawImage(tj, 10, 400, width=320, height=120)
+    c.drawImage(img, 150, 400, width=320, height=120)
+
+    # Salvar o PDF
+    c.save()
 
 def flow_generate(df):
     img = Image.new('RGBA', (800, 300), color=(255, 255, 255, 0))
@@ -57,7 +74,9 @@ def flow_generate(df):
 
         text_x = (k-50 - text_width) // 2
         text_y = y + i.height + 20
-        img.paste(i, (x, y))
+        img.paste(i, (x, y), i)
+
+
         font = ImageFont.truetype("fonts/arial.ttf", 20)
         draw.text((text_x, text_y), text, fill='black', font=font)
 
@@ -65,8 +84,19 @@ def flow_generate(df):
 
         k = k + d
 
-    img.save('foto.png')
+    img.save('foto.png', dpi=(600, 600))
 
 if __name__ == '__main__':
+    # imagem = Image.open('imgs/tj.png')
+    #
+    # # Criar uma nova imagem vazia do Pillow com um canal alfa (transparência)
+    # nova_imagem = Image.new('RGBA', imagem.size, (0, 0, 0, 0))
+    #
+    # # Adicionar a imagem à nova imagem com transparência
+    # nova_imagem.paste(imagem, (0, 0), imagem)
+    #
+    # # Salvar a nova imagem com transparência
+    # nova_imagem.save('imagem_com_transparencia.png', format='PNG')
     df = pd.read_csv('data.csv')
     flow_generate(df)
+    pdf_generator()
