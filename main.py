@@ -15,17 +15,28 @@ def flow_generate(df):
     if df.shape[0] == 2:
         d = int(2220 / df.shape[0])
     if df.shape[0] == 3:
-        d = int(1500/df.shape[0])
+        d = int(1655/df.shape[0])
     if df.shape[0] == 4:
         d = int(1480/df.shape[0])
-
     if df.shape[0] == 5:
         d = int(1400/df.shape[0])
 
 
     k = 200
     for index, row in df.iterrows():
-        i = Image.open('icos/'+row[0])
+        ico = ''
+        if row[0] == 'CASAMENTO':
+            ico = 'casal.png'
+        elif row[0] == 'NASCIMENTO':
+            ico = 'bebe.png'
+        elif row[0] == 'PATRIMONIO':
+            ico = 'patrimonio.png'
+        elif row[0] == 'DIVORCIO':
+            ico = 'divorcio.png'
+        elif row[0] == 'INICIO':
+            ico = 'coracao.png'
+
+        i = Image.open('icos/'+ico)
         i = reduz_icon(i)
 
 
