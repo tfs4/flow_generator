@@ -8,9 +8,17 @@ def reduz_icon(icon):
 
 
 def flow_generate(df):
-    img = Image.new('RGBA', (800, 250), color=(255, 255, 255, 0))
+    img = Image.new('RGBA', (800, 300), color=(255, 255, 255, 0))
     draw = ImageDraw.Draw(img)
-    draw.line((700, 125, 100, 125), fill='black', width=5)
+   # draw.line((700, 125, 100, 125), fill='black', width=5)
+
+    arrow_size = 20  # tamanho da seta em pixels
+    arrow_base = (40 - arrow_size, 250)  # ponto da base da seta
+    arrow_tip = (760 + arrow_size, 250)  # ponto da ponta da seta
+    draw.line((arrow_base, arrow_tip), fill='black', width=5)
+
+    draw.polygon([arrow_tip, (arrow_tip[0] - arrow_size, arrow_tip[1] + arrow_size),
+                  (arrow_tip[0] - arrow_size, arrow_tip[1] - arrow_size)], fill='black')
 
     if df.shape[0] == 2:
         d = int(2220 / df.shape[0])
@@ -50,8 +58,10 @@ def flow_generate(df):
         text_x = (k-50 - text_width) // 2
         text_y = y + i.height + 20
         img.paste(i, (x, y))
-        font = ImageFont.truetype("fonts/arial.ttf", 25)
+        font = ImageFont.truetype("fonts/arial.ttf", 20)
         draw.text((text_x, text_y), text, fill='black', font=font)
+
+
 
         k = k + d
 
