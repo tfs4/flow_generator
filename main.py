@@ -6,13 +6,14 @@ from reportlab.lib.utils import ImageReader
 from reportlab.lib.colors import blue, gray, white
 from PIL import Image, ImageDraw, ImageFont
 from reportlab.lib.units import mm, cm
+from reportlab.lib.colors import HexColor
 
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
 from reportlab.lib import colors
 from reportlab.lib.units import inch
 from reportlab.lib.styles import getSampleStyleSheet
-from reportlab.lib.enums import TA_CENTER
+from reportlab.lib.enums import TA_LEFT
 from reportlab.platypus import Paragraph, Frame, ListFlowable, ListItem
 from reportlab.lib.utils import simpleSplit
 
@@ -37,14 +38,15 @@ def gera_head(c):
     return c
 
 def pdf_generator(metadaos):
-    autor = metadaos.iloc[0]['data']
-    reu = metadaos.iloc[1]['data']
-    num_processo = metadaos.iloc[2]['data']
-    acao = metadaos.iloc[3]['data']
-    pedido_autor = metadaos.iloc[4]['data']
-    pedido_rel = metadaos.iloc[5]['data']
-    acordo = metadaos.iloc[6]['data']
-    decisao = metadaos.iloc[7]['data']
+
+    autor = metadaos.iloc[0]['data'].replace("<>", ",")
+    reu = metadaos.iloc[1]['data'].replace("<>", ",")
+    num_processo = metadaos.iloc[2]['data'].replace("<>", ",")
+    acao = metadaos.iloc[3]['data'].replace("<>", ",")
+    pedido_autor = metadaos.iloc[4]['data'].replace("<>", ",")
+    pedido_rel = metadaos.iloc[5]['data'].replace("<>", ",")
+    acordo = metadaos.iloc[6]['data'].replace("<>", ",")
+    decisao = metadaos.iloc[7]['data'].replace("<>", ",")
 
     lista_pedido_autor = pedido_autor.split(";")
     lista_pedido_reu = pedido_rel.split(";")
@@ -128,21 +130,26 @@ def pdf_generator(metadaos):
     height = y2 - y1
 
     # Desenhar o retângulo
-    c.rect(x1, y1, width, height)
+    c.rect(x1, y1, width, height,stroke=0, fill=0)
     c.setFillColorRGB(1, 1, 1)  # cor branca
     c.setStrokeColorRGB(0, 0, 0)  # cor preta
 
     # Definir a fonte e o tamanho
+    c.setFillColorRGB(1 / 255 * 1, 1 / 255 * 83, 1 / 255 * 165)
     font = "Helvetica-Bold"
     font_size = 12
 
     # Definir a cor do texto como #0153A5
-    c.setFillColorRGB(1 / 255 * 1, 1 / 255 * 83, 1 / 255 * 165)
+
 
     # Criar um objeto Frame para enquadrar a lista dentro do retângulo
     styles = getSampleStyleSheet()
-    style = styles["Normal"]
-    style.alignment = TA_CENTER
+
+    style = styles["BodyText"]
+    style.textColor = HexColor('#0153A5')
+    style.fontName = 'Helvetica-Bold'
+    style.fontSize = 12
+    style.alignment = TA_LEFT
     frame = Frame(x1 + 10, y1 + 10, width - 20, height - 20, showBoundary=0)
 
     # Quebrar os itens em várias linhas usando a função simpleSplit
@@ -155,8 +162,7 @@ def pdf_generator(metadaos):
 
     # Criar um objeto ListFlowable com os itens da lista
     list_items = [ListItem(Paragraph("<bullet>&nbsp;</bullet>" + item, style)) for item in itens_lines]
-    list_flowable = ListFlowable(list_items, bulletType="bullet", bulletColor=colors.black, bulletFontName=font,
-                                 bulletFontSize=font_size, leftIndent=20, value=0)
+    list_flowable = ListFlowable(list_items, bulletType="bullet" )
 
     # Adicionar o objeto ListFlowable ao Frame
     frame.add(list_flowable, c)
