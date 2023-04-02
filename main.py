@@ -12,24 +12,42 @@ def reduz_icon(icon):
     return icon
 
 
-def pdf_generator():
+def pdf_generator(metadaos):
+    autor = metadaos.iloc[0]['data']
+    reu = metadaos.iloc[1]['data']
+    num_processo = metadaos.iloc[2]['data']
+    acao = metadaos.iloc[3]['data']
+
+    BLUE = (0, 0, 1)  # ou BLUE = (0, 0, 255)
     # Criar um novo PDF com uma página em branco
     c = canvas.Canvas("output.pdf", pagesize=letter)
+    width, height = c._pagesize
+
 
     c.radialGradient(100 * mm, 150 * mm, 300 * mm, (white, gray), extend=False)
 
+    c.setFillColorRGB(*BLUE)
+    c.drawString(100, 570, 'AUTOR:'+autor)
+    c.drawString(380, 570, 'REU:'+reu)
+    c.drawString(200, 520, 'Processo n.' + num_processo)
+    c.drawString(200, 490, 'Ação:' + acao)
 
 
+
+    ###0153A5 Cor do texto
     c.setPageSize((612, 792))
     tj = ImageReader('imgs/logo_tj.png')
     img = ImageReader('foto.png')
 
-
-    c.drawImage(tj, 20, 650, width=200, height=100)
-    c.drawImage(img, 150, 400, width=320, height=120)
+    resumo = ImageReader('imgs/img_resumo.png')
 
 
-    c.drawString(250, 600, "RESUMO DA SENTENÇA")
+
+    c.drawImage(tj, 20, 650, width=200, height=100, mask='auto')
+    c.drawImage(img, 150, 350, width=320, height=120, mask='auto')
+
+    c.drawImage(resumo, 230, 600, width=145, height=14, mask='auto')
+
 
     # Salvar o PDF
     c.save()
@@ -107,4 +125,7 @@ if __name__ == '__main__':
 
     df = pd.read_csv('data.csv')
     flow_generate(df)
-    pdf_generator()
+
+    metadaos = pd.read_csv('metadata.csv')
+    print(metadaos.iloc[0]['data'])
+    pdf_generator(metadaos)
