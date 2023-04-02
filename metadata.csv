@@ -6,4 +6,4 @@ ACAO, Modificação de guarda + alimentos
 PEDIDO_AUTOR, Guarda unilateral; Exoneração de alimentos; Pensão alimentícia
 PEDIDO_REU, Apresentou acordo
 ACORDO,Guarda unilateral do adolescente à mãe.;Convivência com o pai em finais de semana;alternados e primeira metade das férias.;Exoneração da obrigação alimentar fixada à mãe.;Pensão alimentícia:
-DECISAO,Aceitou o acordo da forma proposta.;Determinou o pagamento das parcelas em aberto das custas processuais.;Documentos expedidos 15 dias úteis após a publicação da sentença<> condicionado ao pagamento integral das custas processuais.
+DECISAO,Aceitou o acordo da forma proposta.;Determinou o pagamento das parcelas em aberto das custas processuais.;Documentos expedidos 15 dias úteis após a publicação da sentença<> condicionado ao pagamento integral das custas processuais.;Aceitou o acordo da forma proposta.

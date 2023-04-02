@@ -16,6 +16,43 @@ from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.enums import TA_LEFT
 from reportlab.platypus import Paragraph, Frame, ListFlowable, ListItem
 from reportlab.lib.utils import simpleSplit
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+from reportlab.lib.units import inch
+from reportlab.lib.styles import ParagraphStyle
+from reportlab.platypus import Paragraph, Frame
+
+
+def gera_pagina(c, lista_decisao):
+    c.showPage()
+    c.radialGradient(100 * mm, 150 * mm, 300 * mm, (white, gray), extend=False)
+    c = gera_head(c)
+    PAGE_WIDTH, PAGE_HEIGHT = letter
+
+
+
+
+    pdf_canvas = c
+
+    x, y = inch, inch
+    width, height = PAGE_WIDTH - 2 * inch, PAGE_HEIGHT - 2 * inch
+
+    c.setFillColorRGB(0.5, 0.5, 0.5)
+    c.drawString(110, 400, 'DECISÕES DA JUÍZA:')
+
+    text_color = HexColor("#0153A5")
+    style = ParagraphStyle(name="my_style", fontSize=11, leading=12, textColor=text_color)
+
+    k = 0
+    for item in lista_decisao:
+        ico_ok = ImageReader('imgs/verifica.png')
+        c.drawImage(ico_ok, x-50 + inch / 2, y+215-k + inch, width=25, height=25, mask='auto')
+
+        frame = Frame(x-20 + inch / 2, y-300-k + inch / 2, width-200 - inch, height - inch, showBoundary=0)
+        paragraph = Paragraph(item, style=style)
+        frame.addFromList([paragraph], pdf_canvas)
+        k = k+55
+    return pdf_canvas
 
 
 def draw_checklist(canvas, x, y, width, items):
@@ -118,54 +155,58 @@ def pdf_generator(metadaos):
     c.drawImage(resumo, 230, 600, width=145, height=14, mask='auto')
 
 
-    c.showPage()
-    c.radialGradient(100 * mm, 150 * mm, 300 * mm, (white, gray), extend=False)
-    c = gera_head(c)
+    # c.showPage()
+    # c.radialGradient(100 * mm, 150 * mm, 300 * mm, (white, gray), extend=False)
+    # c = gera_head(c)
+    c = gera_pagina(c, lista_decisao)
 
-    # Definir as dimensões do retângulo
-    x1, y1, x2, y2 = 50, 400, 550, 500
-
-    # Definir a largura e altura do retângulo
-    width = x2 - x1
-    height = y2 - y1
-
-    # Desenhar o retângulo
-    c.rect(x1, y1, width, height,stroke=0, fill=0)
-    c.setFillColorRGB(1, 1, 1)  # cor branca
-    c.setStrokeColorRGB(0, 0, 0)  # cor preta
-
-    # Definir a fonte e o tamanho
-    c.setFillColorRGB(1 / 255 * 1, 1 / 255 * 83, 1 / 255 * 165)
-    font = "Helvetica-Bold"
-    font_size = 12
-
-    # Definir a cor do texto como #0153A5
-
-
-    # Criar um objeto Frame para enquadrar a lista dentro do retângulo
-    styles = getSampleStyleSheet()
-
-    style = styles["BodyText"]
-    style.textColor = HexColor('#0153A5')
-    style.fontName = 'Helvetica-Bold'
-    style.fontSize = 12
-    style.alignment = TA_LEFT
-    frame = Frame(x1 + 10, y1 + 10, width - 20, height - 20, showBoundary=0)
-
-    # Quebrar os itens em várias linhas usando a função simpleSplit
-
-    itens_lines = []
-    for item in lista_decisao:
-        lines = simpleSplit(item, font, font_size, width - 40)
-        for line in lines:
-            itens_lines.append(line)
-
-    # Criar um objeto ListFlowable com os itens da lista
-    list_items = [ListItem(Paragraph("<bullet>&nbsp;</bullet>" + item, style)) for item in itens_lines]
-    list_flowable = ListFlowable(list_items, bulletType="bullet" )
-
-    # Adicionar o objeto ListFlowable ao Frame
-    frame.add(list_flowable, c)
+    #
+    #
+    #
+    # # Definir as dimensões do retângulo
+    # x1, y1, x2, y2 = 50, 400, 550, 500
+    #
+    # # Definir a largura e altura do retângulo
+    # width = x2 - x1
+    # height = y2 - y1
+    #
+    # # Desenhar o retângulo
+    # c.rect(x1, y1, width, height,stroke=0, fill=0)
+    # c.setFillColorRGB(1, 1, 1)  # cor branca
+    # c.setStrokeColorRGB(0, 0, 0)  # cor preta
+    #
+    # # Definir a fonte e o tamanho
+    # c.setFillColorRGB(1 / 255 * 1, 1 / 255 * 83, 1 / 255 * 165)
+    # font = "Helvetica-Bold"
+    # font_size = 12
+    #
+    # # Definir a cor do texto como #0153A5
+    #
+    #
+    # # Criar um objeto Frame para enquadrar a lista dentro do retângulo
+    # styles = getSampleStyleSheet()
+    #
+    # style = styles["BodyText"]
+    # style.textColor = HexColor('#0153A5')
+    # style.fontName = 'Helvetica-Bold'
+    # style.fontSize = 12
+    # style.alignment = TA_LEFT
+    # frame = Frame(x1 + 10, y1 + 10, width - 20, height - 20, showBoundary=0)
+    #
+    # # Quebrar os itens em várias linhas usando a função simpleSplit
+    #
+    # itens_lines = []
+    # for item in lista_decisao:
+    #     lines = simpleSplit(item, font, font_size, width - 40)
+    #     for line in lines:
+    #         itens_lines.append(line)
+    #
+    # # Criar um objeto ListFlowable com os itens da lista
+    # list_items = [ListItem(Paragraph("<bullet>&nbsp;</bullet>" + item, style)) for item in itens_lines]
+    # list_flowable = ListFlowable(list_items, bulletType="bullet" )
+    #
+    # # Adicionar o objeto ListFlowable ao Frame
+    # frame.add(list_flowable, c)
 
     c.save()
 
@@ -240,8 +281,9 @@ if __name__ == '__main__':
     # img.paste(i, (0, 0), i)
     # img.save('logo_tj.png', dpi=(600, 600))
 
-    df = pd.read_csv('data.csv')
-    flow_generate(df)
-
-    metadaos = pd.read_csv('metadata.csv')
-    pdf_generator(metadaos)
+    # df = pd.read_csv('data.csv')
+    # flow_generate(df)
+    #
+     metadaos = pd.read_csv('metadata.csv')
+     pdf_generator(metadaos)
+    #gera_pagina()
