@@ -12,6 +12,11 @@ def reduz_icon(icon):
     return icon
 
 
+def gera_head(c):
+    tj = ImageReader('imgs/logo_tj.png')
+    c.drawImage(tj, 20, 650, width=200, height=100, mask='auto')
+    return c
+
 def pdf_generator(metadaos):
     autor = metadaos.iloc[0]['data']
     reu = metadaos.iloc[1]['data']
@@ -20,10 +25,13 @@ def pdf_generator(metadaos):
     pedido_autor = metadaos.iloc[4]['data']
     pedido_rel = metadaos.iloc[5]['data']
     acordo = metadaos.iloc[6]['data']
+    decisao = metadaos.iloc[7]['data']
 
     lista_pedido_autor = pedido_autor.split(";")
     lista_pedido_reu = pedido_rel.split(";")
     lista_acordo = acordo.split(";")
+    lista_decisao = decisao.split(";")
+
 
 
 
@@ -72,21 +80,35 @@ def pdf_generator(metadaos):
 
 #
 
-    ###0153A5 Cor do texto
+
     c.setPageSize((612, 792))
-    tj = ImageReader('imgs/logo_tj.png')
+    c = gera_head(c)
+
+
+
     img = ImageReader('foto.png')
     resumo = ImageReader('imgs/img_resumo.png')
 
 
 
-    c.drawImage(tj, 20, 650, width=200, height=100, mask='auto')
+
     c.drawImage(img, 150, 350, width=320, height=120, mask='auto')
 
     c.drawImage(resumo, 230, 600, width=145, height=14, mask='auto')
 
 
-    # Salvar o PDF
+    c.showPage()
+    c.radialGradient(100 * mm, 150 * mm, 300 * mm, (white, gray), extend=False)
+    c = gera_head(c)
+    c.setFillColorRGB(0.5, 0.5, 0.5)
+    c.drawString(250, 600, 'DECISÕES DA JUÍZA:')
+
+    y = 800 / 2 - 12
+    for item in lista_decisao:
+        y -= 12 * 1.2
+        c.circle(160, y + 4, 2, fill=1)
+        c.drawString(180, y, item)
+
     c.save()
 
 def flow_generate(df):
