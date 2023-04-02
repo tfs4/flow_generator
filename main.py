@@ -7,6 +7,25 @@ from reportlab.lib.colors import blue, gray, white
 from PIL import Image, ImageDraw, ImageFont
 from reportlab.lib.units import mm, cm
 
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import letter
+from reportlab.lib import colors
+from reportlab.lib.units import inch
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.enums import TA_CENTER
+from reportlab.platypus import Paragraph, Frame, ListFlowable, ListItem
+from reportlab.lib.utils import simpleSplit
+
+
+def draw_checklist(canvas, x, y, width, items):
+    canvas.setFont('Helvetica', 12)
+    canvas.rect(x, y, width, len(items)*20 + 20, stroke=1, fill=0)
+    canvas.line(x, y+20, x+width, y+20)
+    canvas.setFont('Helvetica-Bold', 12)
+    for i, item in enumerate(items):
+        canvas.drawCheckmark(x+10, y+25+i*20, 10)
+        canvas.drawString(x+25, y+20+i*20, item)
+
 def reduz_icon(icon):
     icon = icon.resize((100, 100))
     return icon
@@ -100,14 +119,47 @@ def pdf_generator(metadaos):
     c.showPage()
     c.radialGradient(100 * mm, 150 * mm, 300 * mm, (white, gray), extend=False)
     c = gera_head(c)
-    c.setFillColorRGB(0.5, 0.5, 0.5)
-    c.drawString(250, 600, 'DECISÕES DA JUÍZA:')
 
-    y = 800 / 2 - 12
+    # Definir as dimensões do retângulo
+    x1, y1, x2, y2 = 50, 400, 550, 500
+
+    # Definir a largura e altura do retângulo
+    width = x2 - x1
+    height = y2 - y1
+
+    # Desenhar o retângulo
+    c.rect(x1, y1, width, height)
+    c.setFillColorRGB(1, 1, 1)  # cor branca
+    c.setStrokeColorRGB(0, 0, 0)  # cor preta
+
+    # Definir a fonte e o tamanho
+    font = "Helvetica-Bold"
+    font_size = 12
+
+    # Definir a cor do texto como #0153A5
+    c.setFillColorRGB(1 / 255 * 1, 1 / 255 * 83, 1 / 255 * 165)
+
+    # Criar um objeto Frame para enquadrar a lista dentro do retângulo
+    styles = getSampleStyleSheet()
+    style = styles["Normal"]
+    style.alignment = TA_CENTER
+    frame = Frame(x1 + 10, y1 + 10, width - 20, height - 20, showBoundary=0)
+
+    # Quebrar os itens em várias linhas usando a função simpleSplit
+
+    itens_lines = []
     for item in lista_decisao:
-        y -= 12 * 1.2
-        c.circle(160, y + 4, 2, fill=1)
-        c.drawString(180, y, item)
+        lines = simpleSplit(item, font, font_size, width - 40)
+        for line in lines:
+            itens_lines.append(line)
+
+    # Criar um objeto ListFlowable com os itens da lista
+    list_items = [ListItem(Paragraph("<bullet>&nbsp;</bullet>" + item, style)) for item in itens_lines]
+    list_flowable = ListFlowable(list_items, bulletType="bullet", bulletColor=colors.black, bulletFontName=font,
+                                 bulletFontSize=font_size, leftIndent=20, value=0)
+
+    # Adicionar o objeto ListFlowable ao Frame
+    frame.add(list_flowable, c)
 
     c.save()
 
