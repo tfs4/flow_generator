@@ -17,28 +17,65 @@ def pdf_generator(metadaos):
     reu = metadaos.iloc[1]['data']
     num_processo = metadaos.iloc[2]['data']
     acao = metadaos.iloc[3]['data']
+    pedido_autor = metadaos.iloc[4]['data']
+    pedido_rel = metadaos.iloc[5]['data']
+    acordo = metadaos.iloc[6]['data']
+
+    lista_pedido_autor = pedido_autor.split(";")
+    lista_pedido_reu = pedido_rel.split(";")
+    lista_acordo = acordo.split(";")
+
+
 
     BLUE = (0, 0, 1)  # ou BLUE = (0, 0, 255)
     # Criar um novo PDF com uma página em branco
     c = canvas.Canvas("output.pdf", pagesize=letter)
+    c.setFont("Helvetica-Bold", 12)
+
     width, height = c._pagesize
 
 
     c.radialGradient(100 * mm, 150 * mm, 300 * mm, (white, gray), extend=False)
 
-    c.setFillColorRGB(*BLUE)
-    c.drawString(100, 570, 'AUTOR:'+autor)
-    c.drawString(380, 570, 'REU:'+reu)
+    c.setFillColorRGB(1 / 255 * 1, 1 / 255 * 83, 1 / 255 * 165)
+    c.drawString(80, 570, 'AUTOR:'+autor)
+    c.drawString(350, 570, 'REU:'+reu)
     c.drawString(200, 520, 'Processo n.' + num_processo)
-    c.drawString(200, 490, 'Ação:' + acao)
+    c.drawString(190, 490, 'Ação:' + acao)
+
+    c.setFillColorRGB(0.5, 0.5, 0.5)
+    c.drawString(250, 310, 'RESUMO DO PROCESSO')
+
+    c.setFillColorRGB(1 / 255 * 1, 1 / 255 * 83, 1 / 255 * 165)
+    y = 550 / 2 - 12
+    c.setLineWidth(0)
+    for item in lista_pedido_autor:
+        y -= 12 * 1.2
+        c.circle(110, y+4, 2, fill=1)
+        c.drawString(120, y, item)
+
+    y = 550 / 2 - 12
+    for item in lista_pedido_reu:
+        y -= 12 * 1.2
+        c.circle(360, y+4, 2, fill=1)
+        c.drawString(370, y, item)
+
+    y = 300 / 2 - 12
+    for item in lista_acordo:
+        y -= 12 * 1.2
+        c.circle(160, y+4, 2, fill=1)
+        c.drawString(180, y, item)
 
 
+    c.setFillColorRGB(0.5, 0.5, 0.5)
+    c.drawString(290, 150, 'ACORDO')
+
+#
 
     ###0153A5 Cor do texto
     c.setPageSize((612, 792))
     tj = ImageReader('imgs/logo_tj.png')
     img = ImageReader('foto.png')
-
     resumo = ImageReader('imgs/img_resumo.png')
 
 
@@ -127,5 +164,4 @@ if __name__ == '__main__':
     flow_generate(df)
 
     metadaos = pd.read_csv('metadata.csv')
-    print(metadaos.iloc[0]['data'])
     pdf_generator(metadaos)
