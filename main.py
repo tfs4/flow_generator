@@ -23,7 +23,7 @@ from reportlab.lib.styles import ParagraphStyle
 from reportlab.platypus import Paragraph, Frame
 
 
-def gera_pagina(c, lista_decisao):
+def gera_pagina(c, lista_decisao, nome_juiz, consiliacao):
     c.showPage()
     c.radialGradient(100 * mm, 150 * mm, 300 * mm, (white, gray), extend=False)
     c = gera_head(c)
@@ -37,8 +37,25 @@ def gera_pagina(c, lista_decisao):
     x, y = inch, inch
     width, height = PAGE_WIDTH - 2 * inch, PAGE_HEIGHT - 2 * inch
 
+
+    c.setFillColorRGB(0.5, 0.5, 0.5)
+    c.setFont('Helvetica-Bold', 12)
+    c.drawString(190, 600, 'AUDIÊNCIA VIRTUAL DE CONCILIAÇÃO')
+
+
+
+
+
     c.setFillColorRGB(0.5, 0.5, 0.5)
     c.drawString(110, 400, 'DECISÕES DA JUÍZA:')
+    c.setFont('Helvetica-Bold', 12)
+    c.setFillColorRGB(0, 0, 0)
+    c.drawString(110, 100, nome_juiz)
+
+
+    c.setFont('Helvetica', 9)
+    c.setFillColorRGB(0, 0, 0)
+    c.drawString(145, 85, 'Juíza de Direito')
 
     text_color = HexColor("#0153A5")
     style = ParagraphStyle(name="my_style", fontSize=11, leading=12, textColor=text_color)
@@ -84,6 +101,9 @@ def pdf_generator(metadaos):
     pedido_rel = metadaos.iloc[5]['data'].replace("<>", ",")
     acordo = metadaos.iloc[6]['data'].replace("<>", ",")
     decisao = metadaos.iloc[7]['data'].replace("<>", ",")
+    nome_juiz = metadaos.iloc[8]['data'].replace("<>", ",")
+    consiliacao = metadaos.iloc[9]['data'].replace("<>", ",")
+
 
     lista_pedido_autor = pedido_autor.split(";")
     lista_pedido_reu = pedido_rel.split(";")
@@ -112,6 +132,7 @@ def pdf_generator(metadaos):
     c.setFillColorRGB(0.5, 0.5, 0.5)
     c.drawString(250, 310, 'RESUMO DO PROCESSO')
 
+    c.setFont("Helvetica", 12)
     c.setFillColorRGB(1 / 255 * 1, 1 / 255 * 83, 1 / 255 * 165)
     y = 550 / 2 - 12
     c.setLineWidth(0)
@@ -132,11 +153,11 @@ def pdf_generator(metadaos):
         c.circle(160, y+4, 2, fill=1)
         c.drawString(180, y, item)
 
-
+    c.setFont("Helvetica-Bold", 12)
     c.setFillColorRGB(0.5, 0.5, 0.5)
     c.drawString(290, 150, 'ACORDO')
 
-#
+    c.setFont("Helvetica", 12)
 
 
     c.setPageSize((612, 792))
@@ -147,66 +168,11 @@ def pdf_generator(metadaos):
     img = ImageReader('foto.png')
     resumo = ImageReader('imgs/img_resumo.png')
 
-
-
-
     c.drawImage(img, 150, 350, width=320, height=120, mask='auto')
-
     c.drawImage(resumo, 230, 600, width=145, height=14, mask='auto')
 
 
-    # c.showPage()
-    # c.radialGradient(100 * mm, 150 * mm, 300 * mm, (white, gray), extend=False)
-    # c = gera_head(c)
-    c = gera_pagina(c, lista_decisao)
-
-    #
-    #
-    #
-    # # Definir as dimensões do retângulo
-    # x1, y1, x2, y2 = 50, 400, 550, 500
-    #
-    # # Definir a largura e altura do retângulo
-    # width = x2 - x1
-    # height = y2 - y1
-    #
-    # # Desenhar o retângulo
-    # c.rect(x1, y1, width, height,stroke=0, fill=0)
-    # c.setFillColorRGB(1, 1, 1)  # cor branca
-    # c.setStrokeColorRGB(0, 0, 0)  # cor preta
-    #
-    # # Definir a fonte e o tamanho
-    # c.setFillColorRGB(1 / 255 * 1, 1 / 255 * 83, 1 / 255 * 165)
-    # font = "Helvetica-Bold"
-    # font_size = 12
-    #
-    # # Definir a cor do texto como #0153A5
-    #
-    #
-    # # Criar um objeto Frame para enquadrar a lista dentro do retângulo
-    # styles = getSampleStyleSheet()
-    #
-    # style = styles["BodyText"]
-    # style.textColor = HexColor('#0153A5')
-    # style.fontName = 'Helvetica-Bold'
-    # style.fontSize = 12
-    # style.alignment = TA_LEFT
-    # frame = Frame(x1 + 10, y1 + 10, width - 20, height - 20, showBoundary=0)
-    #
-    # # Quebrar os itens em várias linhas usando a função simpleSplit
-    #
-    # itens_lines = []
-    # for item in lista_decisao:
-    #     lines = simpleSplit(item, font, font_size, width - 40)
-    #     for line in lines:
-    #         itens_lines.append(line)
-    #
-    # # Criar um objeto ListFlowable com os itens da lista
-    # list_items = [ListItem(Paragraph("<bullet>&nbsp;</bullet>" + item, style)) for item in itens_lines]
-    # list_flowable = ListFlowable(list_items, bulletType="bullet" )
-    #
-    # # Adicionar o objeto ListFlowable ao Frame
-    # frame.add(list_flowable, c)
+    c = gera_pagina(c, lista_decisao, nome_juiz, consiliacao)
 
     c.save()
 
