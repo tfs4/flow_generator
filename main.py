@@ -1,21 +1,12 @@
 import os
 import pandas as pd
-from reportlab.lib.pagesizes import letter
-from reportlab.pdfgen import canvas
+
 from reportlab.lib.utils import ImageReader
 from reportlab.lib.colors import blue, gray, white
 from PIL import Image, ImageDraw, ImageFont
 from reportlab.lib.units import mm, cm
 from reportlab.lib.colors import HexColor
 
-from reportlab.pdfgen import canvas
-from reportlab.lib.pagesizes import letter
-from reportlab.lib import colors
-from reportlab.lib.units import inch
-from reportlab.lib.styles import getSampleStyleSheet
-from reportlab.lib.enums import TA_LEFT
-from reportlab.platypus import Paragraph, Frame, ListFlowable, ListItem
-from reportlab.lib.utils import simpleSplit
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 from reportlab.lib.units import inch
@@ -24,18 +15,10 @@ from reportlab.platypus import Paragraph, Frame
 from br_gender.base import br_gender_info
 
 
-# img = Image.new('RGBA', (333, 149), color=(255, 255, 255, 0))
-    # i = Image.open('imgs/logo_tj.png')
-    # i = i.resize((333, 149))
-    # img.paste(i, (0, 0), i)
-    # img.save('logo_tj.png', dpi=(600, 600))
-
 
 def genero_masculino(nome):
     partes = nome.split()
-    primeiro_nome = partes[0]
-    genero = br_gender_info.get_gender(primeiro_nome)
-    if genero == 'Male':
+    if br_gender_info.get_gender(partes[0]) == 'Male':
         return True
     else:
         return False
