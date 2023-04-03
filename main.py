@@ -13,24 +13,41 @@ from reportlab.lib.units import inch
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.platypus import Paragraph, Frame
 from br_gender.base import br_gender_info
+import config
+
+
+
+def carrega_dados():
+    metadaos = pd.read_csv('metadata.csv')
+    config.AUTOR = metadaos.iloc[0]['data'].replace("<>", ",")
+    config.REU = metadaos.iloc[1]['data'].replace("<>", ",")
+    config.NUM_PROCESSO = metadaos.iloc[2]['data'].replace("<>", ",")
+    config.ACAO = metadaos.iloc[3]['data'].replace("<>", ",")
+    config.PEDIDO_AUTOR = metadaos.iloc[4]['data'].replace("<>", ",")
+    config.PEDIDO_REU = metadaos.iloc[5]['data'].replace("<>", ",")
+    config.ACORDO = metadaos.iloc[6]['data'].replace("<>", ",")
+    config.DECISAO = metadaos.iloc[7]['data'].replace("<>", ",")
+    config.NOME_JUIZ = metadaos.iloc[8]['data'].replace("<>", ",")
+    config.CONSILIACAO = metadaos.iloc[9]['data'].replace("<>", ",")
+
 
 
 
 def genero_masculino(nome):
     partes = nome.split()
+    print(partes)
     if br_gender_info.get_gender(partes[0]) == 'Male':
         return True
     else:
         return False
 
-def gera_pagina(c, lista_decisao, nome_juiz, consiliacao):
+def gera_pagina(c):
+    lista_decisao = config.DECISAO.split(";")
+
     c.showPage()
     c.radialGradient(100 * mm, 150 * mm, 300 * mm, (white, gray), extend=False)
     c = gera_head(c)
     PAGE_WIDTH, PAGE_HEIGHT = letter
-
-
-
 
     pdf_canvas = c
 
@@ -50,12 +67,12 @@ def gera_pagina(c, lista_decisao, nome_juiz, consiliacao):
     c.drawString(110, 400, 'DECISÕES DA JUÍZA:')
     c.setFont('Helvetica-Bold', 12)
     c.setFillColorRGB(0, 0, 0)
-    c.drawString(110, 100, nome_juiz)
+    c.drawString(110, 100, config.NOME_JUIZ)
 
 
     c.setFont('Helvetica', 9)
     c.setFillColorRGB(0, 0, 0)
-    if genero_masculino(nome_juiz):
+    if genero_masculino(config.NOME_JUIZ):
         c.drawString(145, 85, 'Juíza de Direito')
     else:
         c.drawString(145, 85, 'Juíza de Direito')
@@ -94,24 +111,24 @@ def gera_head(c):
     c.drawImage(tj, 20, 650, width=200, height=100, mask='auto')
     return c
 
-def pdf_generator(metadaos):
+def pdf_generator():
 
-    autor = metadaos.iloc[0]['data'].replace("<>", ",")
-    reu = metadaos.iloc[1]['data'].replace("<>", ",")
-    num_processo = metadaos.iloc[2]['data'].replace("<>", ",")
-    acao = metadaos.iloc[3]['data'].replace("<>", ",")
-    pedido_autor = metadaos.iloc[4]['data'].replace("<>", ",")
-    pedido_rel = metadaos.iloc[5]['data'].replace("<>", ",")
-    acordo = metadaos.iloc[6]['data'].replace("<>", ",")
-    decisao = metadaos.iloc[7]['data'].replace("<>", ",")
-    nome_juiz = metadaos.iloc[8]['data'].replace("<>", ",")
-    consiliacao = metadaos.iloc[9]['data'].replace("<>", ",")
+    # autor = metadaos.iloc[0]['data'].replace("<>", ",")
+    # reu = metadaos.iloc[1]['data'].replace("<>", ",")
+    # num_processo = metadaos.iloc[2]['data'].replace("<>", ",")
+    # acao = metadaos.iloc[3]['data'].replace("<>", ",")
+    # pedido_autor = metadaos.iloc[4]['data'].replace("<>", ",")
+    # pedido_rel = metadaos.iloc[5]['data'].replace("<>", ",")
+    # acordo = metadaos.iloc[6]['data'].replace("<>", ",")
+    # decisao = metadaos.iloc[7]['data'].replace("<>", ",")
+    # nome_juiz = metadaos.iloc[8]['data'].replace("<>", ",")
+    # consiliacao = metadaos.iloc[9]['data'].replace("<>", ",")
 
 
-    lista_pedido_autor = pedido_autor.split(";")
-    lista_pedido_reu = pedido_rel.split(";")
-    lista_acordo = acordo.split(";")
-    lista_decisao = decisao.split(";")
+    lista_pedido_autor = config.PEDIDO_AUTOR.split(";")
+    lista_pedido_reu = config.PEDIDO_REU.split(";")
+    lista_acordo = config.ACORDO.split(";")
+
 
 
 
@@ -127,17 +144,18 @@ def pdf_generator(metadaos):
     c.radialGradient(100 * mm, 150 * mm, 300 * mm, (white, gray), extend=False)
 
     c.setFillColorRGB(1 / 255 * 1, 1 / 255 * 83, 1 / 255 * 165)
-    if genero_masculino(autor):
-        c.drawString(80, 570, 'AUTOR: '+autor)
-    else:
-        c.drawString(80, 570, 'AUTORA: '+autor)
 
-    if genero_masculino(reu):
-        c.drawString(350, 570, 'REU: '+reu)
+    if genero_masculino(config.AUTOR):
+        c.drawString(80, 570, 'AUTOR: '+config.AUTOR)
     else:
-        c.drawString(350, 570, 'RÉ: ' + reu)
-    c.drawString(200, 520, 'Processo n. ' + num_processo)
-    c.drawString(190, 490, 'Ação:' + acao)
+        c.drawString(80, 570, 'AUTORA: '+config.AUTOR)
+
+    if genero_masculino(config.REU):
+        c.drawString(350, 570, 'REU: '+config.REU)
+    else:
+        c.drawString(350, 570, 'RÉ: ' + config.REU)
+    c.drawString(200, 520, 'Processo n. ' + config.NUM_PROCESSO)
+    c.drawString(190, 490, 'Ação:' + config.ACAO)
 
     c.setFillColorRGB(0.5, 0.5, 0.5)
     c.drawString(250, 310, 'RESUMO DO PROCESSO')
@@ -186,7 +204,7 @@ def pdf_generator(metadaos):
     c.drawString(230, 600, 'RESUMO DA SENTENÇA')
 
 
-    c = gera_pagina(c, lista_decisao, nome_juiz, consiliacao)
+    c = gera_pagina(c)
 
     c.save()
 
@@ -255,8 +273,8 @@ def flow_generate(df):
     img.save('foto.png', dpi=(600, 600))
 
 if __name__ == '__main__':
-
+    carrega_dados()
     df = pd.read_csv('data.csv')
     flow_generate(df)
     metadaos = pd.read_csv('metadata.csv')
-    pdf_generator(metadaos)
+    pdf_generator()
