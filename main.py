@@ -22,6 +22,11 @@ from reportlab.lib.units import inch
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.platypus import Paragraph, Frame
 
+# img = Image.new('RGBA', (333, 149), color=(255, 255, 255, 0))
+    # i = Image.open('imgs/logo_tj.png')
+    # i = i.resize((333, 149))
+    # img.paste(i, (0, 0), i)
+    # img.save('logo_tj.png', dpi=(600, 600))
 
 def gera_pagina(c, lista_decisao, nome_juiz, consiliacao):
     c.showPage()
@@ -166,10 +171,14 @@ def pdf_generator(metadaos):
 
 
     img = ImageReader('foto.png')
-    resumo = ImageReader('imgs/img_resumo.png')
-
+    # resumo = ImageReader('imgs/img_resumo.png')
+    # 
     c.drawImage(img, 150, 350, width=320, height=120, mask='auto')
-    c.drawImage(resumo, 230, 600, width=145, height=14, mask='auto')
+    # c.drawImage(resumo, 230, 600, width=145, height=14, mask='auto')
+
+    c.setFont("Helvetica-Bold", 12)
+    c.setFillColorRGB(1 / 255 * 1, 1 / 255 * 83, 1 / 255 * 165)
+    c.drawString(230, 600, 'RESUMO DA SENTENÇA')
 
 
     c = gera_pagina(c, lista_decisao, nome_juiz, consiliacao)
@@ -241,15 +250,8 @@ def flow_generate(df):
     img.save('foto.png', dpi=(600, 600))
 
 if __name__ == '__main__':
-    # img = Image.new('RGBA', (333, 149), color=(255, 255, 255, 0))
-    # i = Image.open('imgs/logo_tj.png')
-    # i = i.resize((333, 149))
-    # img.paste(i, (0, 0), i)
-    # img.save('logo_tj.png', dpi=(600, 600))
 
-    # df = pd.read_csv('data.csv')
-    # flow_generate(df)
-    #
-     metadaos = pd.read_csv('metadata.csv')
-     pdf_generator(metadaos)
-    #gera_pagina()
+    df = pd.read_csv('data.csv')
+    flow_generate(df)
+    metadaos = pd.read_csv('metadata.csv')
+    pdf_generator(metadaos)
