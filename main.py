@@ -21,12 +21,24 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.units import inch
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.platypus import Paragraph, Frame
+from br_gender.base import br_gender_info
+
 
 # img = Image.new('RGBA', (333, 149), color=(255, 255, 255, 0))
     # i = Image.open('imgs/logo_tj.png')
     # i = i.resize((333, 149))
     # img.paste(i, (0, 0), i)
     # img.save('logo_tj.png', dpi=(600, 600))
+
+
+def genero_masculino(nome):
+    partes = nome.split()
+    primeiro_nome = partes[0]
+    genero = br_gender_info.get_gender(primeiro_nome)
+    if genero == 'Male':
+        return True
+    else:
+        return False
 
 def gera_pagina(c, lista_decisao, nome_juiz, consiliacao):
     c.showPage()
@@ -60,7 +72,10 @@ def gera_pagina(c, lista_decisao, nome_juiz, consiliacao):
 
     c.setFont('Helvetica', 9)
     c.setFillColorRGB(0, 0, 0)
-    c.drawString(145, 85, 'Juíza de Direito')
+    if genero_masculino(nome_juiz):
+        c.drawString(145, 85, 'Juíza de Direito')
+    else:
+        c.drawString(145, 85, 'Juíza de Direito')
 
     text_color = HexColor("#0153A5")
     style = ParagraphStyle(name="my_style", fontSize=11, leading=12, textColor=text_color)
@@ -129,9 +144,16 @@ def pdf_generator(metadaos):
     c.radialGradient(100 * mm, 150 * mm, 300 * mm, (white, gray), extend=False)
 
     c.setFillColorRGB(1 / 255 * 1, 1 / 255 * 83, 1 / 255 * 165)
-    c.drawString(80, 570, 'AUTOR:'+autor)
-    c.drawString(350, 570, 'REU:'+reu)
-    c.drawString(200, 520, 'Processo n.' + num_processo)
+    if genero_masculino(autor):
+        c.drawString(80, 570, 'AUTOR: '+autor)
+    else:
+        c.drawString(80, 570, 'AUTORA: '+autor)
+
+    if genero_masculino(reu):
+        c.drawString(350, 570, 'REU: '+reu)
+    else:
+        c.drawString(350, 570, 'RÉ: ' + reu)
+    c.drawString(200, 520, 'Processo n. ' + num_processo)
     c.drawString(190, 490, 'Ação:' + acao)
 
     c.setFillColorRGB(0.5, 0.5, 0.5)
