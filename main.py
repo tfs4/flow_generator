@@ -15,20 +15,25 @@ from reportlab.platypus import Paragraph, Frame
 from br_gender.base import br_gender_info
 import config
 
+import json
+
 
 
 def carrega_dados():
-    metadaos = pd.read_csv('metadata.csv')
-    config.AUTOR = metadaos.iloc[0]['data'].replace("<>", ",")
-    config.REU = metadaos.iloc[1]['data'].replace("<>", ",")
-    config.NUM_PROCESSO = metadaos.iloc[2]['data'].replace("<>", ",")
-    config.ACAO = metadaos.iloc[3]['data'].replace("<>", ",")
-    config.PEDIDO_AUTOR = metadaos.iloc[4]['data'].replace("<>", ",")
-    config.PEDIDO_REU = metadaos.iloc[5]['data'].replace("<>", ",")
-    config.ACORDO = metadaos.iloc[6]['data'].replace("<>", ",")
-    config.DECISAO = metadaos.iloc[7]['data'].replace("<>", ",")
-    config.NOME_JUIZ = metadaos.iloc[8]['data'].replace("<>", ",")
-    config.CONSILIACAO = metadaos.iloc[9]['data'].replace("<>", ",")
+    f = open('sentencas/sentenca_1.json')
+    data = json.load(f)
+
+
+    config.AUTOR = data['autor']
+    config.REU = data['reu']
+    config.NUM_PROCESSO = data['numero']
+    config.ACAO = data['acao']
+    config.PEDIDO_AUTOR = ""
+    config.PEDIDO_REU = ""
+    config.ACORDO = ""
+    config.DECISAO = ""
+    config.NOME_JUIZ = data['magistrado']
+    config.CONSILIACAO = ""
 
 
 
@@ -113,18 +118,6 @@ def gera_head(c):
 
 def pdf_generator():
 
-    # autor = metadaos.iloc[0]['data'].replace("<>", ",")
-    # reu = metadaos.iloc[1]['data'].replace("<>", ",")
-    # num_processo = metadaos.iloc[2]['data'].replace("<>", ",")
-    # acao = metadaos.iloc[3]['data'].replace("<>", ",")
-    # pedido_autor = metadaos.iloc[4]['data'].replace("<>", ",")
-    # pedido_rel = metadaos.iloc[5]['data'].replace("<>", ",")
-    # acordo = metadaos.iloc[6]['data'].replace("<>", ",")
-    # decisao = metadaos.iloc[7]['data'].replace("<>", ",")
-    # nome_juiz = metadaos.iloc[8]['data'].replace("<>", ",")
-    # consiliacao = metadaos.iloc[9]['data'].replace("<>", ",")
-
-
     lista_pedido_autor = config.PEDIDO_AUTOR.split(";")
     lista_pedido_reu = config.PEDIDO_REU.split(";")
     lista_acordo = config.ACORDO.split(";")
@@ -135,7 +128,7 @@ def pdf_generator():
 
     BLUE = (0, 0, 1)  # ou BLUE = (0, 0, 255)
     # Criar um novo PDF com uma página em branco
-    c = canvas.Canvas("output.pdf", pagesize=letter)
+    c = canvas.Canvas("output_.pdf", pagesize=letter)
     c.setFont("Helvetica-Bold", 12)
 
     width, height = c._pagesize
@@ -278,3 +271,6 @@ if __name__ == '__main__':
     flow_generate(df)
     metadaos = pd.read_csv('metadata.csv')
     pdf_generator()
+    # f = open('sentencas/sentenca_1.json')
+    # data = json.load(f)
+    # print(data['autor'])
