@@ -6,8 +6,7 @@ from sumy.summarizers.text_rank import TextRankSummarizer
 def obter_topicos_do_texto(texto):
     parser = PlaintextParser.from_string(texto, Tokenizer("portuguese"))
     summarizer = TextRankSummarizer()
-    resumo = summarizer(parser.document, 3)  # Define o número de sentenças do resumo desejado
-
+    resumo = summarizer(parser.document, 3)  
     topicos = [str(sentenca) for sentenca in resumo]
     return topicos
 
