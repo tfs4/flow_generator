@@ -14,6 +14,8 @@ from reportlab.lib.styles import ParagraphStyle
 from reportlab.platypus import Paragraph, Frame
 from br_gender.base import br_gender_info
 import config
+import importador
+import sumarizador_decisao
 
 import json
 
@@ -31,7 +33,7 @@ def carrega_dados():
     config.PEDIDO_AUTOR = ""
     config.PEDIDO_REU = ""
     config.ACORDO = ""
-    config.DECISAO = ""
+    #config.DECISAO = ""
     config.NOME_JUIZ = data['magistrado']
     config.CONSILIACAO = ""
 
@@ -47,7 +49,6 @@ def genero_masculino(nome):
         return False
 
 def gera_pagina(c):
-    lista_decisao = config.DECISAO.split(";")
 
     c.showPage()
     c.radialGradient(100 * mm, 150 * mm, 300 * mm, (white, gray), extend=False)
@@ -86,7 +87,7 @@ def gera_pagina(c):
     style = ParagraphStyle(name="my_style", fontSize=11, leading=12, textColor=text_color)
 
     k = 0
-    for item in lista_decisao:
+    for item in config.DECISAO:
         ico_ok = ImageReader('imgs/verifica.png')
         c.drawImage(ico_ok, x-50 + inch / 2, y+215-k + inch, width=25, height=25, mask='auto')
 
@@ -266,11 +267,21 @@ def flow_generate(df):
     img.save('foto.png', dpi=(600, 600))
 
 if __name__ == '__main__':
+
+    dados_tabela = importador.obter_dados_tabela('5234338.35.2018.8.09.0175')
+    for linha in dados_tabela:
+        if linha[2] == 'Decisão':
+            config.DECISAO = sumarizador_decisao.processa_decisao(linha[4])
+
     carrega_dados()
     df = pd.read_csv('data.csv')
     flow_generate(df)
     metadaos = pd.read_csv('metadata.csv')
     pdf_generator()
-    # f = open('sentencas/sentenca_1.json')
-    # data = json.load(f)
-    # print(data['autor'])
+    f = open('sentencas/sentenca_1.json')
+    data = json.load(f)
+    print(data['autor'])
+
+
+
+
