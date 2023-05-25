@@ -84,7 +84,7 @@ def gera_pagina(c):
         c.drawString(145, 85, 'Juíza de Direito')
 
     text_color = HexColor("#0153A5")
-    style = ParagraphStyle(name="my_style", fontSize=11, leading=12, textColor=text_color)
+    style = ParagraphStyle(name="my_style", fontSize=9, leading=12, textColor=text_color)
 
     k = 0
     for item in config.DECISAO:
@@ -266,12 +266,28 @@ def flow_generate(df):
 
     img.save('foto.png', dpi=(600, 600))
 
+
+'''
+porquê alguns processos (5288916.96.2018.8.09.0158; 5428743.25.2018.8.09.0158; 5468795.38.2018.8.09.0134) tem mais de uma decisão?
+
+'''
 if __name__ == '__main__':
 
-    dados_tabela = importador.obter_dados_tabela('5234338.35.2018.8.09.0175')
+ #5468795.38.2018.8.09.0134
+ #5234338.35.2018.8.09.0175
+    dados_tabela = importador.obter_dados_tabela('5468795.38.2018.8.09.0134')
     for linha in dados_tabela:
         if linha[2] == 'Decisão':
-            config.DECISAO = sumarizador_decisao.processa_decisao(linha[4])
+            decisao = sumarizador_decisao.processa_decisao(linha[4])
+            print(linha[4])
+            print(decisao)
+            config.DECISAO = decisao
+            break
+        # if linha[2] == 'Petição Inicial':
+        #         # decisao = sumarizador_decisao.processa_decisao(linha[4])
+        #         # config.DECISAO = decisao
+        #     print(linha[4])
+
 
     carrega_dados()
     df = pd.read_csv('data.csv')
